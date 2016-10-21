@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "778468112090",
+    "firebase_url": "https://notificationpoc-144611.firebaseio.com",
+    "project_id": "notificationpoc-144611",
+    "storage_bucket": "notificationpoc-144611.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778468112090:android:f6f938b55b919eed",
+        "android_client_info": {
+          "package_name": "com.fourtyseven.notificationpoc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "778468112090-hhsphi5bsp55ujp9m40giit3dqmvne1p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNXoT-dXHFZAgRUumBNpoTrngd9aSWQOo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
