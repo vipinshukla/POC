@@ -28,8 +28,12 @@ public class AnimatedBannerBroadcastReceiver extends BroadcastReceiver {
 
         if(intent.getExtras().getString("delete")!=null){
             cancleNotification(context, intent.getExtras().getInt("notificationId"));
-
         }
+        if(intent.getExtras().getString("displayText")!=null){
+            String displayText = intent.getExtras().getString("displayText");
+        }
+
+
 
         if( intent.getExtras().getString("button")!=null) {
             ComplexPreferences prefrence;
@@ -39,8 +43,8 @@ public class AnimatedBannerBroadcastReceiver extends BroadcastReceiver {
             int index = intent.getExtras().getInt("index");
             String position = intent.getExtras().getString("button");
             NotificationPayload payload = prefrence.getObject(noti_id+"", NotificationPayload.class);
-
             CarouselNotification carouselNotification = new CarouselNotification(context, prefrence.getObject(noti_id + "", NotificationPayload.class));
+
             int sizeOfImages = payload.getImages().size();
             if (position.equalsIgnoreCase("next")) {
                 if (index > sizeOfImages - 1) {

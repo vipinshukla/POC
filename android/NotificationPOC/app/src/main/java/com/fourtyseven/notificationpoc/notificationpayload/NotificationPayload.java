@@ -33,6 +33,9 @@ public class NotificationPayload{
     private String deepLink;
     private ArrayList<Action> action;
     private String layoutType;
+    private String iconUrl;
+    private String backgroundColor;
+    private String textColor;
 
     public ArrayList<Action> getActions ()
     {
@@ -181,5 +184,26 @@ public class NotificationPayload{
     }
     public void setLayoutType(String layoutType){
         this.layoutType = layoutType;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
+    public String getIconUrl(){
+        return iconUrl;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+    public String getBackgroundColor(){
+        return backgroundColor;
+    }
+    public void setTextColor(String textColor){
+        this.textColor = textColor;
+    }
+
+    public String getTextColor() {
+        return textColor;
     }
 }

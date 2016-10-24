@@ -92,12 +92,21 @@ public class FireBaseNotificationService extends FirebaseMessagingService {
                         payload.setCampaignName(me.getValue());
                         break;
                     }
+                    case "background":{
+                        payload.setBackgroundColor(me.getValue());
+                        break;
+                    }
+                    case "textColor":{
+                        payload.setTextColor(me.getValue());
+                        break;
+                    }
+
                     case "campaignType":{
                         payload.setCampaignType(me.getValue());
                         break;
                     }
                     case "iconUrl":{
-                       // payload.setImageUrl(me.getValue());
+                        payload.setIconUrl(me.getValue());
                         break;
                     }
                     case "imageUrl":{
@@ -139,8 +148,6 @@ public class FireBaseNotificationService extends FirebaseMessagingService {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-
                 }
             }
 
@@ -160,12 +167,14 @@ public class FireBaseNotificationService extends FirebaseMessagingService {
                     if (!payload.getImageUrl().isEmpty()) {
                         FileOutputStream fos = null;
                         try {
-
-                            File myPath = new File(directory, payload.getNotificationId()+ ".png");
+                            File myPath = new File(directory, payload.getNotificationId()+"imageUrl");
                             fos = new FileOutputStream(myPath);
                             Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(payload.getImageUrl()).getContent());
-                            App.addBitmapToMemoryCache(payload.getImageUrl(),bitmap);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                            if(bitmap!=null) {
+                                App.addBitmapToMemoryCache(payload.getImageUrl(), bitmap);
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                            }
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
@@ -175,6 +184,29 @@ public class FireBaseNotificationService extends FirebaseMessagingService {
                                 e.printStackTrace();
                             }
                         }
+                    }
+
+                    if(!payload.getIconUrl().isEmpty()){
+                        FileOutputStream fos = null;
+                        try {
+                            File myPath = new File(directory, payload.getNotificationId()+"iconUrl");
+                            fos = new FileOutputStream(myPath);
+                            Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(payload.getIconUrl()).getContent());
+                            if(bitmap!=null) {
+                                App.addBitmapToMemoryCache(payload.getImageUrl(), bitmap);
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                fos.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
                     }
                 }
 
@@ -190,8 +222,11 @@ public class FireBaseNotificationService extends FirebaseMessagingService {
                             fos = new FileOutputStream(myPath);
                             NotificationImageGroup group = notificationImageGroups.get(i);
                             Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(group.getImageUrl()).getContent());
-                            App.addBitmapToMemoryCache(payload.getNotificationId()+"_"+i,bitmap);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                            if(bitmap!=null) {
+                                App.addBitmapToMemoryCache(payload.getNotificationId() + "_" + i, bitmap);
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                            }
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
@@ -201,6 +236,28 @@ public class FireBaseNotificationService extends FirebaseMessagingService {
                                 e.printStackTrace();
                             }
                         }
+                    }
+                    if(!payload.getIconUrl().isEmpty()){
+                        FileOutputStream fos = null;
+                        try {
+                            File myPath = new File(directory, payload.getNotificationId()+"iconUrl");
+                            fos = new FileOutputStream(myPath);
+                            Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(payload.getIconUrl()).getContent());
+                            if(bitmap!=null) {
+                                App.addBitmapToMemoryCache(payload.getImageUrl(), bitmap);
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                fos.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
                     }
                 }
             }

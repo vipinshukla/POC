@@ -21,8 +21,12 @@ import com.fourtyseven.notificationpoc.Apputils;
 import com.fourtyseven.notificationpoc.ComplexPreferences;
 import com.fourtyseven.notificationpoc.R;
 import com.fourtyseven.notificationpoc.broadcastreciver.AnimatedBannerBroadcastReceiver;
+import com.fourtyseven.notificationpoc.notificationpayload.Action;
 import com.fourtyseven.notificationpoc.notificationpayload.NotificationImageGroup;
 import com.fourtyseven.notificationpoc.notificationpayload.NotificationPayload;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,6 +68,9 @@ public class CarouselNotification {
     }
 
     public void startDisplayNotification(Context context, int noti_id, boolean isNewNotification, int index, NotificationPayload payload) {
+        if(payload==null){
+            return;
+        }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
 
@@ -74,11 +81,16 @@ public class CarouselNotification {
         if (payload.getDisplayType().equalsIgnoreCase("animation")) {
             setDataInRemoteView(builder, payload.getlayoutType(), payload);
             setSliderOrCarouse(builder, payload, index);
-        } else {
+        }
+
+        else {
             if (payload.getDisplayType().equalsIgnoreCase("basic")) {
                 setDataInRemoteView(builder, payload);
                 setNotificationStyle(builder, payload.getTitle(), payload.getMessage());
                 setStyle(builder, payload.getImageUrl(), payload.getMessage());
+                if(payload.getActions()!=null){
+                    setAction(payload,builder);
+                }
                 notificationManager.notify(noti_id, builder.build());
             }
         }
@@ -108,7 +120,9 @@ public class CarouselNotification {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-            App.addBitmapToMemoryCache(name, bitmap);
+            if(bitmap!=null) {
+                App.addBitmapToMemoryCache(name, bitmap);
+            }
         }
         return bitmap;
     }
@@ -157,6 +171,7 @@ public class CarouselNotification {
             }
 
             if (payload.getDeepLink() != null) {
+                setDeepLink(payload.getDeepLink());
 
             }
             int titleID = this.getViewId("title");
@@ -185,12 +200,13 @@ public class CarouselNotification {
                 remoteViews.setViewVisibility(getViewId("q10_single_image"), View.VISIBLE);
                 ArrayList<NotificationImageGroup> list = payload.getImages();
                 for (int i = 0; i < 1; i++) {
-                    remoteViews.setImageViewBitmap(getViewId("q10_single_image"), App.getBitmapFromMemCache(list.get(i).getImageUrl()));
+                   remoteViews.setImageViewResource(getViewId("q10_single_image"), R.drawable.pinofi_logo);
+                   // remoteViews.setImageViewBitmap(getViewId("q10_single_image"), App.getBitmapFromMemCache(payload.getNotificationId()+"iconUrl"));
                 }
             } else if ("basic".equalsIgnoreCase(string)) {
                 remoteViews.setViewVisibility(getViewId("q10_multiple_images"), View.GONE);
                 remoteViews.setViewVisibility(getViewId("q10_single_image"), View.VISIBLE);
-                remoteViews.setImageViewBitmap(getViewId("q10_single_image"), App.getBitmapFromMemCache(payload.getImageUrl()));
+                remoteViews.setImageViewBitmap(getViewId("q10_single_image"), App.getBitmapFromMemCache(payload.getNotificationId()+"iconUrl"));
             } else if ("carousel".equalsIgnoreCase(string)) {
                 remoteViews.setViewVisibility(getViewId("q10_multiple_images"), View.VISIBLE);
                 remoteViews.setViewVisibility(getViewId("q10_single_image"), View.GONE);
@@ -199,13 +215,13 @@ public class CarouselNotification {
                     remoteViews.setImageViewBitmap(getViewId("q10_image_" + i), App.getBitmapFromMemCache(list.get(i).getImageUrl()));
                 }
             }
-           /* if (!payload.isEmpty() && !string4.isEmpty()) {
-                remoteViews.setInt(getViewId("q10_style"), "setBackgroundColor", Color.parseColor(string3));
-                remoteViews.setTextColor(getViewId("q10_title"), Color.parseColor(string4));
-                remoteViews.setTextColor(getViewId("q10_message"), Color.parseColor(string4));
-            } else {*/
+           if (!payload.getBackgroundColor().isEmpty() && !payload.getTextColor().isEmpty()) {
+                remoteViews.setInt(getViewId("q10_style"), "setBackgroundColor", Color.parseColor(payload.getBackgroundColor()));
+                remoteViews.setTextColor(getViewId("q10_title"), Color.parseColor(payload.getTextColor()));
+                remoteViews.setTextColor(getViewId("q10_message"), Color.parseColor(payload.getTextColor()));
+            } else {
                 remoteViews.setInt(getViewId("q10_style"), "setBackgroundColor", Color.WHITE);
-            //}
+            }
             builder.setContent(remoteViews);
         } catch (Exception var6_7) {
             // ab.a(s.a, a.e, "Exception while setting custom color for title and text: %s", var6_7);
@@ -252,23 +268,25 @@ public class CarouselNotification {
             if (Build.VERSION.SDK_INT < 21) {
                 remoteViews.setTextColor(titleViewId, Color.WHITE);
                 remoteViews.setTextColor(messageViewID, Color.WHITE);
+                int Headerview = getViewId("qg_notification_image_full_content_view");
+                remoteViews.setInt(Headerview, "setBackgroundColor", Color.BLUE);
             } else {
                 int Headerview = getViewId("qg_notification_image_full_content_view");
                 remoteViews.setInt(Headerview, "setBackgroundColor", Color.WHITE);
             }
             remoteViews.setImageViewResource(appiconViewID, R.drawable.pinofi_logo);
         }
-       /* if (bl && (payload.getIconImage!=null)) {
+        if (!bl && (payload.getIconUrl()!=null)) {
             remoteViews.setViewVisibility(iconViewID, View.VISIBLE);
-            remoteViews.setImageViewBitmap(iconViewID, getBitmapFromString(context, payload.getNotificationId(), payload.getIcon()));
+            remoteViews.setImageViewResource(iconViewID, R.drawable.pinofi_logo);
         } else if (bl) {
             remoteViews.setViewVisibility(iconViewID, View.GONE);
-        }*/
+        }
         if (string.equalsIgnoreCase("slider")) {
             arrn = new int[]{getViewId("qg_slider")};
         } else {
             arrn = new int[2];
-            if (!b) {
+            if (b) {
                 arrn[0] = getViewId("qg_carousel_0_center_croped");
                 arrn[1] = getViewId("qg_carousel_1_center_croped");
                 remoteViews.setViewVisibility(getViewId("qg_carousel_0"), View.GONE);
@@ -456,6 +474,42 @@ public class CarouselNotification {
         }
         NotificationManagerCompat.from(context).notify(payload.getNotificationId(), notification);
     }
+    ////////////////////////////Action
+
+    private void setAction(NotificationPayload payload,NotificationCompat.Builder builder) {
+
+        for (int i = 0; i < payload.getActions().size(); i++) {
+            int n3 = 0;
+            Action action = payload.getActions().get(i);
+            if (!action.getText().isEmpty()) {
+                Bundle bundle3 = new Bundle();
+             //   bundle3.putBoolean("poll", bl);
+                PendingIntent pendingIntent3 = actionPendingIntent(payload, action, bundle3,i);
+                builder.addAction(n3, action.getText(), pendingIntent3);
+            }
+
+        }
+    }
+
+
+    private PendingIntent actionPendingIntent(NotificationPayload payload,Action action , Bundle bundle,int id) {
+        String displayactionText = action.getText();
+        String deeplink = action.getDeeplink();
+        if (!displayactionText.equals("")) {
+            bundle.putString("displayText",displayactionText);
+            bundle.putString("deeplink",deeplink);
+            bundle.putInt("notificationId", payload.getNotificationId());
+        }
+        return getPendingIntent("actionClicked", payload.getNotificationId(), bundle,id);
+    }
+
+    PendingIntent getPendingIntent(String string, int notificationId, Bundle bundle,int id) {
+
+        Intent intent = new Intent(context, AnimatedBannerBroadcastReceiver.class);
+        intent.putExtras(bundle);
+        return PendingIntent.getBroadcast(context, id,intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
 
 
 }
